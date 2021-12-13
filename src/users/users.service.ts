@@ -14,10 +14,9 @@ export class UsersService {
   ) {}
 
   async create(dto: CreateUserDto): Promise<UserEntity> {
-    return await this.UsersRepository.save({
-      email: dto.email,
-      password: dto.password,
-    });
+    const newUser = await this.UsersRepository.create(dto);
+    await this.UsersRepository.save(newUser);
+    return newUser;
   }
 
   findAllUsers(): Promise<UserEntity[]> {
@@ -54,10 +53,15 @@ export class UsersService {
       return user;
     }
   }
+
   async removeRefreshToken(userId: number) {
     return this.UsersRepository.update(userId, {
       currentHashedRefreshToken: null,
     });
+  }
+
+  getUserByEmail(email: string) {
+    return this.UsersRepository.findOne({ where: { email } });
   }
 
   update(id: number, dto: UpdateUserDto) {
@@ -66,9 +70,5 @@ export class UsersService {
 
   remove(id: number) {
     return `This action removes a #${id} user`;
-  }
-
-  getUserByEmail(email: string) {
-    return this.UsersRepository.findOne({ where: { email } });
   }
 }

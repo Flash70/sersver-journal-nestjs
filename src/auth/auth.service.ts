@@ -6,8 +6,8 @@ import { UserEntity } from '../users/entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 
-enum MySqlErrorCode {
-  UniqueViolation = 'ER_DUP_ENTRY',
+enum PostgresErrorCode {
+  UniqueViolation = '23505',
 }
 
 export interface TokenPayload {
@@ -30,7 +30,7 @@ export class AuthService {
       const { id, email } = await this.UsersService.create(candidate);
       return { id, email };
     } catch (err) {
-      if (err?.code === MySqlErrorCode.UniqueViolation) {
+      if (err?.code === PostgresErrorCode.UniqueViolation) {
         throw new HttpException(
           'User with that email already exists',
           HttpStatus.BAD_REQUEST,
@@ -53,7 +53,7 @@ export class AuthService {
         id,
         email,
       };
-    } catch (e) {
+    } catch (err) {
       throw new HttpException(
         'Wrong credentials provided',
         HttpStatus.BAD_REQUEST,

@@ -1,5 +1,6 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { UserEntity } from '../../users/entities/user.entity';
+import { CommentEntity } from '../../comment/entities/comment.entity';
 
 @Entity('post')
 export class PostEntity {
@@ -10,8 +11,11 @@ export class PostEntity {
   title: string;
 
   @Column()
-  text: string;
+  description: string;
 
-  @ManyToOne(() => UserEntity, (user: UserEntity) => user.post)
+  @ManyToOne(() => UserEntity, (user: UserEntity) => user.post, { nullable: true })
   public user: UserEntity;
+
+  @OneToMany(() => CommentEntity, (comment: CommentEntity) => comment.post, { nullable: true, cascade: true })
+  public comment: CommentEntity;
 }
